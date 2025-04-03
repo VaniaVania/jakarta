@@ -1,9 +1,9 @@
-package com.example.tomcat_docker_debug;
+package com.example.jakarta;
 
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 
 @ApplicationPath("/api")
-public class TomcatApplication extends Application {
+public class JakartaApplication extends Application {
 
 }
