@@ -36,12 +36,20 @@ public class FindingService {
         return finding;
     }
 
-    public void deleteFinding(Long id) {
-        dao.delete(id);
-    }
-
     public List<Finding> searchByKeyword(String keyword) {
         return dao.findByKeyword(keyword);
+    }
+
+    public List<Finding> getAllFindings(int page, int size) {
+        return dao.findAll(page, size);
+    }
+
+    public List<Finding> searchByKeywordWithPagination(String keyword, int page, int size) {
+        return dao.findByKeywordWithPagination(keyword, page, size);
+    }
+
+    public boolean deleteFinding(Long id) {
+        return dao.deleteIfExists(id);
     }
 
 

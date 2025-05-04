@@ -4,15 +4,8 @@ import com.example.jakarta.model.Finding;
 import com.example.jakarta.service.impl.FindingService;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.PATCH;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
 
 import java.util.List;
 
@@ -27,30 +20,84 @@ public class FindingResource {
 
     @GET
     @Path("/{id}")
-    public Finding get(@PathParam("id") Long id) {
-        return findingService.getFinding(id);
+    public Response get(@PathParam("id") Long id) {
+        Finding finding = findingService.getFinding(id);
+        if (finding == null) {
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .build();
+        }
+        return Response
+                .ok(finding)
+                .build();
     }
 
     @POST
-    public Finding create(Finding finding) {
-        return findingService.createFinding(finding);
+    public Response create(Finding finding, @Context UriInfo uriInfo) {
+        try {
+            Finding created = findingService.createFinding(finding);
+            UriBuilder builder = uriInfo.getAbsolutePathBuilder();
+            builder.path(Long.toString(created.getId()));
+            return Response
+                    .created(builder.build())
+                    .entity(created)
+                    .build();
+        } catch (Exception e) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .build();
+        }
     }
 
     @PATCH
     @Path("/{id}")
-    public Finding update(@PathParam("id") Long id, Finding finding) {
-        return findingService.updateFinding(id, finding);
+    public Response update(@PathParam("id") Long id, Finding finding) {
+        Finding updated = findingService.updateFinding(id, finding);
+        if (updated == null) {
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .build();
+        }
+        return Response
+                .ok(updated)
+                .build();
     }
 
     @DELETE
     @Path("/{id}")
-    public void delete(@PathParam("id") Long id){
-        findingService.deleteFinding(id);
+    public Response delete(@PathParam("id") Long id) {
+        boolean deleted = findingService.deleteFinding(id);
+        if (!deleted) {
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .build();
+        }
+        return Response
+                .noContent()
+                .build();
     }
 
     @GET
-    @Path("/search/{keyword}")
-    public List<Finding> searchByKeyword(@PathParam("keyword") String keyword) {
-        return findingService.searchByKeyword(keyword);
+    @Path("/search")
+    public Response search(
+            @QueryParam("keyword") String keyword,
+            @QueryParam("page") @DefaultValue("1") int page,
+            @QueryParam("size") @DefaultValue("10") int size) {
+
+        List<Finding> results = findingService.searchByKeywordWithPagination(keyword, page, size);
+        return Response
+                .ok(results)
+                .build();
+    }
+
+    @GET
+    public Response getAll(
+            @QueryParam("page") @DefaultValue("1") int page,
+            @QueryParam("size") @DefaultValue("10") int size) {
+
+        List<Finding> results = findingService.getAllFindings(page, size);
+        return Response
+                .ok(results)
+                .build();
     }
 }

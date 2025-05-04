@@ -41,5 +41,30 @@ public class FindingDAO {
                 .getResultList();
     }
 
+    public List<Finding> findAll(int page, int size) {
+        return em.createQuery("SELECT f FROM Finding f", Finding.class)
+                .setFirstResult((page - 1) * size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    public List<Finding> findByKeywordWithPagination(String keyword, int page, int size) {
+        return em.createQuery(
+                        "SELECT f FROM Finding f WHERE :keyword MEMBER OF f.keywords", Finding.class)
+                .setParameter("keyword", keyword)
+                .setFirstResult((page - 1) * size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    public boolean deleteIfExists(Long id) {
+        Finding f = read(id);
+        if (f != null) {
+            em.remove(f);
+            return true;
+        }
+        return false;
+    }
+
 
 }
