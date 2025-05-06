@@ -12,6 +12,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Stateless
-public class FindingResource {
+public class FindingController {
 
     @Inject
     private FindingService findingService;
@@ -49,8 +50,8 @@ public class FindingResource {
     }
 
     @GET
-    @Path("/search/{keyword}")
-    public List<Finding> searchByKeyword(@PathParam("keyword") String keyword) {
+    @Path("/search")
+    public List<Finding> searchByKeyword(@QueryParam("keyword") String keyword) {
         return findingService.searchByKeyword(keyword);
     }
 }

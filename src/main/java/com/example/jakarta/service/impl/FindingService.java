@@ -1,5 +1,6 @@
 package com.example.jakarta.service.impl;
 
+import com.example.jakarta.exceptions.TitleBlankException;
 import com.example.jakarta.model.Finding;
 import com.example.jakarta.service.dao.FindingDAO;
 import jakarta.ejb.Stateless;
@@ -7,6 +8,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Stateless
 public class FindingService {
@@ -14,12 +16,17 @@ public class FindingService {
     @Inject
     private FindingDAO dao;
 
-    @Transactional
+    @Transactional()
     public Finding createFinding(Finding finding) {
-        if (finding.getContactInfo() != null && finding.getContactInfo().getId() == null) {
+
+        if (Objects.nonNull(finding.getContactInfo())) {
             dao.createContactInfo(finding.getContactInfo());
         }
         dao.create(finding);
+
+        if(finding.getTitle().isBlank()){
+            throw new TitleBlankException();
+        }
         return finding;
     }
 
@@ -30,7 +37,8 @@ public class FindingService {
     public Finding updateFinding(Long id, Finding finding) {
         Finding dbFinding = dao.read(id);
         finding.setId(dbFinding.getId());
-        finding.getContactInfo().setId(dbFinding.getContactInfo().getId());
+        finding.getContactInfo()
+                .setId(dbFinding.getContactInfo().getId());
 
         dao.update(finding);
         return finding;

@@ -1,5 +1,6 @@
 package com.example.jakarta.model;
 
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -12,7 +13,10 @@ public class Finding {
     @GeneratedValue
     private Long id;
 
+    @Nonnull
     private String title;
+
+    @Nonnull
     private String description;
 
     @ElementCollection
@@ -24,7 +28,7 @@ public class Finding {
 
     public Finding() {}
 
-    public Finding(String title, String description, List<String> keywords, ContactInfo contactInfo) {
+    public Finding(@Nonnull String title, @Nonnull String description, List<String> keywords, ContactInfo contactInfo) {
         this.title = title;
         this.description = description;
         this.keywords = keywords;
