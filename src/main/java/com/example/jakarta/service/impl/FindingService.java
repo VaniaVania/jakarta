@@ -29,10 +29,14 @@ public class FindingService {
 
     public Finding updateFinding(Long id, Finding finding) {
         Finding dbFinding = dao.read(id);
-        finding.setId(dbFinding.getId());
-        finding.getContactInfo().setId(dbFinding.getContactInfo().getId());
+        if (finding != null) {
+            finding.setId(dbFinding.getId());
+            finding.getContactInfo().setId(dbFinding.getContactInfo().getId());
 
-        dao.update(finding);
+            dao.update(finding);
+        } else {
+            return null;
+        }
         return finding;
     }
 

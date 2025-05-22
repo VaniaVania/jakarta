@@ -70,4 +70,15 @@ public class Finding {
     public void setContactInfo(ContactInfo contactInfo) {
         this.contactInfo = contactInfo;
     }
+
+    @Override
+    public String toString() {
+        return "Finding{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", keywords=" + keywords +
+                ", contactInfo=" + contactInfo +
+                '}';
+    }
 }
